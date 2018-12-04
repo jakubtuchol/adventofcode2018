@@ -19,5 +19,6 @@ fn main() {
         frequencies.push(frequency.trim().to_string());
     }
 
-    println!("Day one part one answer is {}", day_one::calculate_final_frequency(frequencies.as_slice()))
+    println!("Day one part one answer is {}", day_one::calculate_final_frequency(frequencies.as_slice()));
+    println!("Day one part two answer is {}", day_one::find_repeated_frequency(frequencies.as_slice()));
 }
