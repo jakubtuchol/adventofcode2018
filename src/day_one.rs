@@ -1,8 +1,29 @@
+use std::collections::HashSet;
+
 pub fn calculate_final_frequency<'a>(frequencies: &'a [String]) -> i32 {
     let mut sum = 0;
 
     for frequency in frequencies {
         sum += frequency.parse::<i32>().unwrap();
+    }
+
+    return sum;
+}
+
+pub fn find_repeated_frequency<'a>(frequencies: &'a [String]) -> i32 {
+    let mut set: HashSet<i32> = HashSet::new();
+
+    let mut sum = 0;
+    set.insert(sum);
+
+    for frequency in frequencies {
+        sum += frequency.parse::<i32>().unwrap();
+
+        if set.contains(&sum) {
+            return sum;
+        } else {
+            set.insert(sum);
+        }
     }
 
     return sum;
