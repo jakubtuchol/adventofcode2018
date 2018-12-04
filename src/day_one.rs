@@ -22,13 +22,17 @@ mod tests {
     #[test]
     fn test_provided_examples() {
         let tests = vec![
-            FrequencyTest { input: &[ "+1", "+1", "+1"], expected: 3 },
-            FrequencyTest { input: &[ "+1", "+1", "-2"], expected: 0 },
-            FrequencyTest { input: &[ "-1", "-2", "-3"], expected: -6 },
+            FrequencyTest { input: &["+1", "+1", "+1"], expected: 3 },
+            FrequencyTest { input: &["+1", "+1", "-2"], expected: 0 },
+            FrequencyTest { input: &["-1", "-2", "-3"], expected: -6 },
         ];
 
         for test in &tests {
-            assert_eq!(test.expected, calculate_final_frequency(test.input));
+            let test_input = test.input
+                .iter()
+                .map(|&x| x.to_owned())
+                .collect();
+            assert_eq!(test.expected, calculate_final_frequency(test_input));
         }
     }
 }
