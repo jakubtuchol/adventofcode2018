@@ -1,4 +1,4 @@
-pub fn calculate_final_frequency<'a>(frequencies: &'a [&'a str]) -> i32 {
+pub fn calculate_final_frequency<'a>(frequencies: &'a [String]) -> i32 {
     let mut sum = 0;
 
     for frequency in frequencies {

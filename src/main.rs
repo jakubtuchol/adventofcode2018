@@ -2,6 +2,8 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
 
+mod day_one;
+
 fn main() {
     // Day One
     let day_one_file = match File::open("data/day_one.txt") {
@@ -10,11 +12,12 @@ fn main() {
     };
     let reader = BufReader::new(day_one_file);
 
-    let frequencies: Vec<&str> = Vec::new();
+    let mut frequencies: Vec<String> = Vec::new();
 
     for line in reader.lines() {
         let frequency = line.unwrap();
-        frequencies.push(&frequency.clone().trim());
+        frequencies.push(frequency.trim().to_string());
     }
 
+    println!("Day one part one answer is {}", day_one::calculate_final_frequency(frequencies.as_slice()))
 }
