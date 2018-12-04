@@ -1,0 +1,6 @@
+[package]
+name = "adventofcode"
+version = "0.1.0"
+authors = ["Jakub Tucholski <jakub@uber.com>"]
+
+[dependencies]
