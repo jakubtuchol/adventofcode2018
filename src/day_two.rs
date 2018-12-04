@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use itertools::Itertools;
 
 fn get_id_checksum(id: &String) -> (bool, bool) {
     let mut counts = HashMap::new();
@@ -25,6 +26,26 @@ pub fn get_box_list_checksum(ids: &[String]) -> i32 {
 
     return twos * threes;
 }
+
+fn find_matching_words(ids: &[String]) -> Option<(&String, &String)> {
+    fn check_matching_words(one: &String, two: &String) -> bool {
+        let matching = one.chars().zip(two.chars()).filter(|&(a, b)| a == b).count();
+        return matching == one.chars().count() - 1;
+    }
+
+    for (one, two) in ids.iter().tuple_combinations::<(_, _)>() {
+        if check_matching_words(one, two) {
+            return Some((&one, &two));
+        }
+    }
+
+    return None;
+}
+
+/*
+pub fn get_common_letters(ids: &[String]) -> &String {
+}
+*/
 
 
 #[cfg(test)]
@@ -68,5 +89,28 @@ mod tests {
         let owned_boxes = boxes.iter().map(|&x| x.to_owned()).collect::<Vec<String>>();
 
         assert_eq!(12, get_box_list_checksum(owned_boxes.as_slice()));
+    }
+
+    #[test]
+    fn test_find_matching_words() {
+        let boxes = vec![
+            "abcde",
+            "fghij",
+            "klmno",
+            "pqrst",
+            "fguij",
+            "axcye",
+            "wvxyz"
+        ];
+
+        let owned_boxes = boxes.iter().map(|&x| x.to_owned()).collect::<Vec<String>>();
+
+        let result = find_matching_words(owned_boxes.as_slice());
+
+        assert!(result.is_some());
+
+        let (first, second) = result.unwrap();
+        assert_eq!("fghij", first);
+        assert_eq!("fguij", second);
     }
 }

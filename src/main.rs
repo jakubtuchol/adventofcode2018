@@ -1,3 +1,5 @@
+#[macro_use] extern crate itertools;
+
 use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
