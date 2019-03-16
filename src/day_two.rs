@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use itertools::Itertools;
 
-fn get_id_checksum(id: &String) -> (bool, bool) {
+fn get_id_checksum(id: &str) -> (bool, bool) {
     let mut counts = HashMap::new();
 
     for c in id.chars() {
@@ -13,12 +13,13 @@ fn get_id_checksum(id: &String) -> (bool, bool) {
     return (found_two, found_three);
 }
 
-pub fn get_box_list_checksum(ids: &[String]) -> i32 {
+/// Given a list of strings, returns the checksum of this list
+pub fn get_box_list_checksum(ids: Vec<String>) -> i32 {
     let mut twos = 0;
     let mut threes = 0;
 
     for id in ids {
-        let (two, three) = get_id_checksum(id);
+        let (two, three) = get_id_checksum(&id);
 
         if two { twos += 1; }
         if three { threes += 1; }
@@ -27,8 +28,8 @@ pub fn get_box_list_checksum(ids: &[String]) -> i32 {
     return twos * threes;
 }
 
-fn find_matching_words(ids: &[String]) -> Option<(&String, &String)> {
-    fn check_matching_words(one: &String, two: &String) -> bool {
+fn find_matching_words<'a>(ids: Vec<&'a str>) -> Option<(&'a str, &'a str)> {
+    fn check_matching_words(one: &str, two: &str) -> bool {
         let matching = one.chars().zip(two.chars()).filter(|&(a, b)| a == b).count();
         return matching == one.chars().count() - 1;
     }
@@ -86,9 +87,7 @@ mod tests {
             "ababab",
         ];
 
-        let owned_boxes = boxes.iter().map(|&x| x.to_owned()).collect::<Vec<String>>();
-
-        assert_eq!(12, get_box_list_checksum(owned_boxes.as_slice()));
+        assert_eq!(12, get_box_list_checksum(boxes));
     }
 
     #[test]
@@ -103,9 +102,7 @@ mod tests {
             "wvxyz"
         ];
 
-        let owned_boxes = boxes.iter().map(|&x| x.to_owned()).collect::<Vec<String>>();
-
-        let result = find_matching_words(owned_boxes.as_slice());
+        let result = find_matching_words(boxes);
 
         assert!(result.is_some());
 

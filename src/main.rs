@@ -3,6 +3,7 @@
 use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
+use std::clone;
 
 mod day_one;
 mod day_two;
@@ -32,12 +33,12 @@ fn main() {
     };
     let reader = BufReader::new(day_two_file);
 
-    let mut boxes: Vec<String> = Vec::new();
-
+    let boxes: Vec<String> = reader.lines().map(|x| x.unwrap().clone()).collect();
+    /*
     for line in reader.lines() {
         let box_id = line.unwrap();
-        boxes.push(box_id.trim().to_string());
+        boxes.push(box_id.trim().clone());
     }
-
-    println!("Day two part one answer is {}", day_two::get_box_list_checksum(boxes.as_slice()));
+    */
+    println!("Day two part one answer is {}", day_two::get_box_list_checksum(boxes));
 }
