@@ -33,7 +33,9 @@ fn main() {
     };
     let reader = BufReader::new(day_two_file);
 
+    //let boxes: Vec<String> = reader.lines().map(|x| x.unwrap().clone()).collect();
     let boxes: Vec<String> = reader.lines().map(|x| x.unwrap().clone()).collect();
+    let ref_boxes: Vec<&str> = boxes.iter().map(|x| &**x).collect();
     /*
     for line in reader.lines() {
         let box_id = line.unwrap();

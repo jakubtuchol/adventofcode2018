@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use itertools::Itertools;
 
+// Gets the checksum of a given id
 fn get_id_checksum(id: &str) -> (bool, bool) {
     let mut counts = HashMap::new();
 
@@ -28,6 +29,7 @@ pub fn get_box_list_checksum(ids: Vec<String>) -> i32 {
     return twos * threes;
 }
 
+/// Find the matching words in a given string vector
 fn find_matching_words<'a>(ids: Vec<&'a str>) -> Option<(&'a str, &'a str)> {
     fn check_matching_words(one: &str, two: &str) -> bool {
         let matching = one.chars().zip(two.chars()).filter(|&(a, b)| a == b).count();
@@ -42,9 +44,9 @@ fn find_matching_words<'a>(ids: Vec<&'a str>) -> Option<(&'a str, &'a str)> {
 
     return None;
 }
-
 /*
-pub fn get_common_letters(ids: &[String]) -> &String {
+pub fn get_common_letters(ids: Vec<&str>) -> &str {
+
 }
 */
 
