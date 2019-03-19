@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use itertools::Itertools;
+use std::collections::HashMap;
 
 fn get_id_checksum(id: &str) -> (bool, bool) {
     let mut counts = HashMap::new();
@@ -21,8 +21,12 @@ pub fn get_box_list_checksum(ids: Vec<String>) -> i32 {
     for id in ids {
         let (two, three) = get_id_checksum(&id);
 
-        if two { twos += 1; }
-        if three { threes += 1; }
+        if two {
+            twos += 1;
+        }
+        if three {
+            threes += 1;
+        }
     }
 
     return twos * threes;
@@ -30,7 +34,11 @@ pub fn get_box_list_checksum(ids: Vec<String>) -> i32 {
 
 fn find_matching_words<'a>(ids: Vec<&'a str>) -> Option<(&'a str, &'a str)> {
     fn check_matching_words(one: &str, two: &str) -> bool {
-        let matching = one.chars().zip(two.chars()).filter(|&(a, b)| a == b).count();
+        let matching = one
+            .chars()
+            .zip(two.chars())
+            .filter(|&(a, b)| a == b)
+            .count();
         return matching == one.chars().count() - 1;
     }
 
@@ -48,7 +56,6 @@ pub fn get_common_letters(ids: &[String]) -> &String {
 }
 */
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -61,13 +68,34 @@ mod tests {
     #[test]
     fn test_get_id_checksum() {
         let tests = vec![
-            ChecksumTest { id: "abcdef", result: (false, false) },
-            ChecksumTest { id: "bababc", result: (true, true) },
-            ChecksumTest { id: "abbcde", result: (true, false) },
-            ChecksumTest { id: "abcccd", result: (false, true) },
-            ChecksumTest { id: "aabcdd", result: (true, false) },
-            ChecksumTest { id: "abcdee", result: (true, false) },
-            ChecksumTest { id: "ababab", result: (false, true) },
+            ChecksumTest {
+                id: "abcdef",
+                result: (false, false),
+            },
+            ChecksumTest {
+                id: "bababc",
+                result: (true, true),
+            },
+            ChecksumTest {
+                id: "abbcde",
+                result: (true, false),
+            },
+            ChecksumTest {
+                id: "abcccd",
+                result: (false, true),
+            },
+            ChecksumTest {
+                id: "aabcdd",
+                result: (true, false),
+            },
+            ChecksumTest {
+                id: "abcdee",
+                result: (true, false),
+            },
+            ChecksumTest {
+                id: "ababab",
+                result: (false, true),
+            },
         ];
 
         for test in &tests {
@@ -78,13 +106,13 @@ mod tests {
     #[test]
     fn test_get_box_list_checksum() {
         let boxes = vec![
-            "abcdef",
-            "bababc",
-            "abbcde",
-            "abcccd",
-            "aabcdd",
-            "abcdee",
-            "ababab",
+            "abcdef".to_owned(),
+            "bababc".to_owned(),
+            "abbcde".to_owned(),
+            "abcccd".to_owned(),
+            "aabcdd".to_owned(),
+            "abcdee".to_owned(),
+            "ababab".to_owned(),
         ];
 
         assert_eq!(12, get_box_list_checksum(boxes));
@@ -93,13 +121,7 @@ mod tests {
     #[test]
     fn test_find_matching_words() {
         let boxes = vec![
-            "abcde",
-            "fghij",
-            "klmno",
-            "pqrst",
-            "fguij",
-            "axcye",
-            "wvxyz"
+            "abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz",
         ];
 
         let result = find_matching_words(boxes);
