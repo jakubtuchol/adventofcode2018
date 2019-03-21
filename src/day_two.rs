@@ -32,7 +32,25 @@ pub fn get_box_list_checksum(ids: Vec<String>) -> i32 {
     return twos * threes;
 }
 
-fn find_matching_words<'a>(ids: Vec<&'a str>) -> Option<(&'a str, &'a str)> {
+// Given a vector of strings, find two strings that differ by at most one letter,
+// and return the common letters in those two strings
+pub fn get_common_letters(ids: Vec<String>) -> Option<String> {
+    fn check_match(a: char, b: char) -> Option<char> {
+        if a == b {
+            return Some(a);
+        }
+        None
+    }
+
+    fn filter_matching_letters<'a>(one: &'a str, two: &'a str) -> String {
+        let matching = one
+            .chars()
+            .zip(two.chars())
+            .filter_map(|(a, b)| check_match(a, b))
+            .collect::<String>();
+        matching
+    }
+
     fn check_matching_words(one: &str, two: &str) -> bool {
         let matching = one
             .chars()
@@ -44,17 +62,11 @@ fn find_matching_words<'a>(ids: Vec<&'a str>) -> Option<(&'a str, &'a str)> {
 
     for (one, two) in ids.iter().tuple_combinations::<(_, _)>() {
         if check_matching_words(one, two) {
-            return Some((&one, &two));
+            return Some(filter_matching_letters(one, two));
         }
     }
-
-    return None;
+    None
 }
-
-/*
-pub fn get_common_letters(ids: &[String]) -> &String {
-}
-*/
 
 #[cfg(test)]
 mod tests {
@@ -124,12 +136,13 @@ mod tests {
             "abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz",
         ];
 
-        let result = find_matching_words(boxes);
+        let owned_boxes = boxes.iter().map(|&x| x.to_owned()).collect::<Vec<String>>();
+
+        let result = get_common_letters(owned_boxes);
 
         assert!(result.is_some());
 
-        let (first, second) = result.unwrap();
-        assert_eq!("fghij", first);
-        assert_eq!("fguij", second);
+        let res = result.unwrap();
+        assert_eq!("fgij", res);
     }
 }

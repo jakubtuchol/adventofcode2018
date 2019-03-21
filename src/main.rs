@@ -23,11 +23,11 @@ fn main() {
 
     println!(
         "Day one part one answer is {}",
-        day_one::calculate_final_frequency(unwrapped_frequencies.clone().as_slice())
+        day_one::calculate_final_frequency(unwrapped_frequencies.clone())
     );
     println!(
         "Day one part two answer is {}",
-        day_one::find_repeated_frequency(unwrapped_frequencies.clone().as_slice())
+        day_one::find_repeated_frequency(unwrapped_frequencies.clone())
     );
 
     // Day Two
@@ -38,8 +38,13 @@ fn main() {
     let reader = BufReader::new(day_two_file);
 
     let boxes: Result<Vec<String>, _> = reader.lines().collect();
+    let unwrapped_boxes = boxes.unwrap();
     println!(
         "Day two part one answer is {}",
-        day_two::get_box_list_checksum(boxes.unwrap())
+        day_two::get_box_list_checksum(unwrapped_boxes.clone())
+    );
+    println!(
+        "Day two part two answer is {}",
+        day_two::get_common_letters(unwrapped_boxes.clone()).unwrap(),
     );
 }
