@@ -1,7 +1,5 @@
-#[macro_use]
 extern crate itertools;
 
-use std::clone;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
