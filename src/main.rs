@@ -46,4 +46,18 @@ fn main() {
         "Day two part two answer is {}",
         day_two::get_common_letters(unwrapped_boxes.clone()).unwrap(),
     );
+
+    // Day Three
+    let day_three_file = match File::open("data/day_three.txt") {
+        Ok(f) => f,
+        Err(e) => panic!(e),
+    };
+    let reader = BufReader::new(day_three_file);
+
+    let boxes: Result<Vec<String>, _> = reader.lines().collect();
+    let unwrapped_boxes = boxes.unwrap();
+    println!(
+        "Day three part one answer is {}",
+        day_three::find_num_overlapping_spaces(unwrapped_boxes.clone())
+    );
 }

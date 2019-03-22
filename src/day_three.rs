@@ -1,3 +1,7 @@
+use itertools::Itertools;
+use std::cmp::{max, min};
+use std::collections::HashSet;
+
 struct Claim {
     id: u32,
     left: u32,
@@ -58,7 +62,25 @@ fn claims_intersect<'a>(one: &'a Claim, two: &'a Claim) -> bool {
     false
 }
 
-//fn get_claim_overlap<'a>(one: &'a Claim, two: &'a Claim) -> Vec<(u32, u32)> {}
+fn get_claim_overlap<'a>(one: &'a Claim, two: &'a Claim) -> Vec<(u32, u32)> {
+    let mut spaces = Vec::new();
+    if !claims_intersect(&one, &two) {
+        return spaces;
+    }
+
+    let left = max(one.left, two.left);
+    let top = max(one.top, two.top);
+
+    let right = min(one.left + one.width, two.left + two.width);
+    let bottom = min(one.top + one.height, two.top + two.height);
+
+    for x in left..right {
+        for y in top..bottom {
+            spaces.push((x, y));
+        }
+    }
+    spaces
+}
 
 fn create_claim(code: &str) -> Option<Claim> {
     let split = code.split(' ').collect::<Vec<&str>>();
@@ -118,6 +140,24 @@ fn create_claim(code: &str) -> Option<Claim> {
         width: width,
         height: height,
     })
+}
+
+pub fn find_num_overlapping_spaces(lines: Vec<String>) -> u32 {
+    let mut claims: Vec<Claim> = Vec::new();
+    for line in &lines {
+        claims.push(create_claim(line).unwrap());
+    }
+
+    let mut overlaps = HashSet::new();
+
+    for (one, two) in claims.iter().tuple_combinations::<(_, _)>() {
+        let spaces = get_claim_overlap(&one, &two);
+        for space in spaces {
+            overlaps.insert(space);
+        }
+    }
+
+    overlaps.len() as u32
 }
 
 #[cfg(test)]
@@ -266,5 +306,53 @@ mod tests {
                 height: 4,
             },
         ));
+    }
+
+    #[test]
+    fn test_get_claim_overlap() {
+        let spaces = get_claim_overlap(
+            &Claim {
+                id: 0,
+                left: 1,
+                top: 3,
+                width: 4,
+                height: 4,
+            },
+            &Claim {
+                id: 1,
+                left: 3,
+                top: 1,
+                width: 4,
+                height: 4,
+            },
+        );
+
+        assert_eq!(4, spaces.len());
+
+        let spaces_non_overlapping = get_claim_overlap(
+            &Claim {
+                id: 0,
+                left: 1,
+                top: 3,
+                width: 4,
+                height: 4,
+            },
+            &Claim {
+                id: 1,
+                left: 5,
+                top: 5,
+                width: 2,
+                height: 2,
+            },
+        );
+
+        assert_eq!(0, spaces_non_overlapping.len());
+    }
+
+    #[test]
+    fn test_find_num_overlapping_spaces() {
+        let lines = vec!["#1 @ 1,3: 4x4", "#2 @ 3,1: 4x4", "#3 @ 5,5: 2x2"];
+        let owned_lines = lines.iter().map(|&x| x.to_owned()).collect::<Vec<String>>();
+        assert_eq!(4, find_num_overlapping_spaces(owned_lines));
     }
 }
