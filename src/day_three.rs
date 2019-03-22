@@ -6,11 +6,59 @@ struct Claim {
     height: u32,
 }
 
-/*
-fn get_claim_overlap<'a>(one: &'a Claim, two: &'a Claim) -> Vec<(u32, u32)> {
+fn claims_intersect<'a>(one: &'a Claim, two: &'a Claim) -> bool {
+    // Check top-left to bottom-right axis intersection
+    let top_left_one = (one.left, one.top);
+    let top_left_two = (two.left, two.top);
+    let bottom_right_one = (one.left + one.width, one.top + one.height);
+    let bottom_right_two = (two.left + two.width, two.top + two.height);
 
+    // top-left of one between down diagonal of two
+    if top_left_one.0 >= top_left_two.0
+        && top_left_one.1 >= top_left_two.1
+        && top_left_one.0 <= bottom_right_two.0
+        && top_left_one.1 <= bottom_right_two.1
+    {
+        return true;
+    }
+
+    // top-left of two between down diagonal of one
+    if top_left_two.0 >= top_left_one.0
+        && top_left_two.1 >= top_left_one.1
+        && top_left_two.0 <= bottom_right_one.0
+        && top_left_two.1 <= bottom_right_one.1
+    {
+        return true;
+    }
+
+    // Check bottom-left to top-right axis intersection
+    let bottom_left_one = (one.left, one.top + one.height);
+    let bottom_left_two = (two.left, two.top + two.height);
+    let top_right_one = (one.left + one.width, one.top);
+    let top_right_two = (two.left + two.width, two.top);
+
+    // top-right of one between up diagonal of two
+    if top_right_one.0 >= bottom_left_two.0
+        && top_right_one.1 <= bottom_left_two.1
+        && top_right_one.0 <= top_right_two.0
+        && top_right_one.1 >= top_right_two.1
+    {
+        return true;
+    }
+
+    // top-right of two between up diagonal of two
+    if top_right_two.0 >= bottom_left_one.0
+        && top_right_two.1 <= bottom_left_one.1
+        && top_right_two.0 <= top_right_one.0
+        && top_right_two.1 >= top_right_one.1
+    {
+        return true;
+    }
+
+    false
 }
-*/
+
+//fn get_claim_overlap<'a>(one: &'a Claim, two: &'a Claim) -> Vec<(u32, u32)> {}
 
 fn create_claim(code: &str) -> Option<Claim> {
     let split = code.split(' ').collect::<Vec<&str>>();
@@ -126,5 +174,97 @@ mod tests {
             assert_eq!(test.result.width, unwrapped_claim.width);
             assert_eq!(test.result.height, unwrapped_claim.height);
         }
+    }
+
+    #[test]
+    fn test_claims_intersect() {
+        // Bottom-right corner of one intersects with two
+        assert!(claims_intersect(
+            &Claim {
+                id: 0,
+                left: 1,
+                top: 1,
+                width: 3,
+                height: 3,
+            },
+            &Claim {
+                id: 1,
+                left: 3,
+                top: 3,
+                width: 4,
+                height: 4,
+            },
+        ));
+        // Bottom-right corner of two intersects with one
+        assert!(claims_intersect(
+            &Claim {
+                id: 1,
+                left: 3,
+                top: 3,
+                width: 4,
+                height: 4,
+            },
+            &Claim {
+                id: 0,
+                left: 1,
+                top: 1,
+                width: 3,
+                height: 3,
+            },
+        ));
+
+        // Top-right corner of one intersects with two
+        assert!(claims_intersect(
+            &Claim {
+                id: 0,
+                left: 1,
+                top: 3,
+                width: 4,
+                height: 4,
+            },
+            &Claim {
+                id: 1,
+                left: 4,
+                top: 1,
+                width: 4,
+                height: 4,
+            },
+        ));
+
+        // Top-right corner of two intersects with one
+        assert!(claims_intersect(
+            &Claim {
+                id: 0,
+                left: 4,
+                top: 1,
+                width: 4,
+                height: 4,
+            },
+            &Claim {
+                id: 1,
+                left: 1,
+                top: 3,
+                width: 4,
+                height: 4,
+            },
+        ));
+
+        // Box one contained in box two
+        assert!(claims_intersect(
+            &Claim {
+                id: 0,
+                left: 2,
+                top: 2,
+                width: 2,
+                height: 2,
+            },
+            &Claim {
+                id: 1,
+                left: 1,
+                top: 1,
+                width: 4,
+                height: 4,
+            },
+        ));
     }
 }
