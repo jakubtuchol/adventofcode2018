@@ -10,63 +10,8 @@ struct Claim {
     height: u32,
 }
 
-fn claims_intersect<'a>(one: &'a Claim, two: &'a Claim) -> bool {
-    // Check top-left to bottom-right axis intersection
-    let top_left_one = (one.left, one.top);
-    let top_left_two = (two.left, two.top);
-    let bottom_right_one = (one.left + one.width, one.top + one.height);
-    let bottom_right_two = (two.left + two.width, two.top + two.height);
-
-    // top-left of one between down diagonal of two
-    if top_left_one.0 >= top_left_two.0
-        && top_left_one.1 >= top_left_two.1
-        && top_left_one.0 <= bottom_right_two.0
-        && top_left_one.1 <= bottom_right_two.1
-    {
-        return true;
-    }
-
-    // top-left of two between down diagonal of one
-    if top_left_two.0 >= top_left_one.0
-        && top_left_two.1 >= top_left_one.1
-        && top_left_two.0 <= bottom_right_one.0
-        && top_left_two.1 <= bottom_right_one.1
-    {
-        return true;
-    }
-
-    // Check bottom-left to top-right axis intersection
-    let bottom_left_one = (one.left, one.top + one.height);
-    let bottom_left_two = (two.left, two.top + two.height);
-    let top_right_one = (one.left + one.width, one.top);
-    let top_right_two = (two.left + two.width, two.top);
-
-    // top-right of one between up diagonal of two
-    if top_right_one.0 >= bottom_left_two.0
-        && top_right_one.1 <= bottom_left_two.1
-        && top_right_one.0 <= top_right_two.0
-        && top_right_one.1 >= top_right_two.1
-    {
-        return true;
-    }
-
-    // top-right of two between up diagonal of two
-    if top_right_two.0 >= bottom_left_one.0
-        && top_right_two.1 <= bottom_left_one.1
-        && top_right_two.0 <= top_right_one.0
-        && top_right_two.1 >= top_right_one.1
-    {
-        return true;
-    }
-
-    false
-}
-
 fn get_claim_overlap<'a>(one: &'a Claim, two: &'a Claim) -> Vec<(u32, u32)> {
     let mut spaces = Vec::new();
-    if !claims_intersect(&one, &two) {
-        return spaces;
-    }
 
     let left = max(one.left, two.left);
     let top = max(one.top, two.top);
@@ -217,98 +162,6 @@ mod tests {
     }
 
     #[test]
-    fn test_claims_intersect() {
-        // Bottom-right corner of one intersects with two
-        assert!(claims_intersect(
-            &Claim {
-                id: 0,
-                left: 1,
-                top: 1,
-                width: 3,
-                height: 3,
-            },
-            &Claim {
-                id: 1,
-                left: 3,
-                top: 3,
-                width: 4,
-                height: 4,
-            },
-        ));
-        // Bottom-right corner of two intersects with one
-        assert!(claims_intersect(
-            &Claim {
-                id: 1,
-                left: 3,
-                top: 3,
-                width: 4,
-                height: 4,
-            },
-            &Claim {
-                id: 0,
-                left: 1,
-                top: 1,
-                width: 3,
-                height: 3,
-            },
-        ));
-
-        // Top-right corner of one intersects with two
-        assert!(claims_intersect(
-            &Claim {
-                id: 0,
-                left: 1,
-                top: 3,
-                width: 4,
-                height: 4,
-            },
-            &Claim {
-                id: 1,
-                left: 4,
-                top: 1,
-                width: 4,
-                height: 4,
-            },
-        ));
-
-        // Top-right corner of two intersects with one
-        assert!(claims_intersect(
-            &Claim {
-                id: 0,
-                left: 4,
-                top: 1,
-                width: 4,
-                height: 4,
-            },
-            &Claim {
-                id: 1,
-                left: 1,
-                top: 3,
-                width: 4,
-                height: 4,
-            },
-        ));
-
-        // Box one contained in box two
-        assert!(claims_intersect(
-            &Claim {
-                id: 0,
-                left: 2,
-                top: 2,
-                width: 2,
-                height: 2,
-            },
-            &Claim {
-                id: 1,
-                left: 1,
-                top: 1,
-                width: 4,
-                height: 4,
-            },
-        ));
-    }
-
-    #[test]
     fn test_get_claim_overlap() {
         let spaces = get_claim_overlap(
             &Claim {
@@ -347,6 +200,25 @@ mod tests {
         );
 
         assert_eq!(0, spaces_non_overlapping.len());
+
+        let single_overlap = get_claim_overlap(
+            &Claim {
+                id: 0,
+                left: 0,
+                top: 0,
+                width: 4,
+                height: 4,
+            },
+            &Claim {
+                id: 1,
+                left: 3,
+                top: 3,
+                width: 4,
+                height: 4,
+            },
+        );
+
+        assert_eq!(1, single_overlap.len());
     }
 
     #[test]
