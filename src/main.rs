@@ -5,8 +5,8 @@ use std::io::prelude::*;
 use std::io::BufReader;
 
 mod day_one;
-mod day_two;
 mod day_three;
+mod day_two;
 
 fn main() {
     // Day One
@@ -59,5 +59,9 @@ fn main() {
     println!(
         "Day three part one answer is {}",
         day_three::find_num_overlapping_spaces(unwrapped_boxes.clone())
+    );
+    println!(
+        "Day three part two answer is {}",
+        day_three::find_non_overlapping_claim(unwrapped_boxes.clone())
     );
 }

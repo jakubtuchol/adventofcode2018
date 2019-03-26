@@ -10,6 +10,7 @@ struct Claim {
     height: u32,
 }
 
+// Given two claims, create a vector of overlapping spaces
 fn get_claim_overlap<'a>(one: &'a Claim, two: &'a Claim) -> Vec<(u32, u32)> {
     let mut spaces = Vec::new();
 
@@ -27,6 +28,8 @@ fn get_claim_overlap<'a>(one: &'a Claim, two: &'a Claim) -> Vec<(u32, u32)> {
     spaces
 }
 
+// Given a string in the format `#1 @ 1,3: 4x4`, return a structured
+// claim struct
 fn create_claim(code: &str) -> Option<Claim> {
     let split = code.split(' ').collect::<Vec<&str>>();
     if split.len() != 4 {
@@ -87,6 +90,8 @@ fn create_claim(code: &str) -> Option<Claim> {
     })
 }
 
+// Find the of overlapping spaces given a vector of strings
+// representing claims
 pub fn find_num_overlapping_spaces(lines: Vec<String>) -> u32 {
     let mut claims: Vec<Claim> = Vec::new();
     for line in &lines {
@@ -103,6 +108,41 @@ pub fn find_num_overlapping_spaces(lines: Vec<String>) -> u32 {
     }
 
     overlaps.len() as u32
+}
+
+// Find the id of a claim that does not overlap with any other claim
+// given a vector of strings representing claims.
+pub fn find_non_overlapping_claim(lines: Vec<String>) -> u32 {
+    let mut claims = Vec::new();
+    for line in &lines {
+        claims.push(create_claim(line).unwrap());
+    }
+
+    let mut non_overlapping_candidates = HashSet::new();
+    let mut overlaps = HashSet::new();
+
+    for (one, two) in claims.iter().tuple_combinations::<(_, _)>() {
+        let spaces = get_claim_overlap(&one, &two);
+        if spaces.len() == 0 {
+            if !overlaps.contains(&one.id) {
+                non_overlapping_candidates.insert(one.id);
+            }
+            if !overlaps.contains(&two.id) {
+                non_overlapping_candidates.insert(two.id);
+            }
+        } else {
+            overlaps.insert(&one.id);
+            overlaps.insert(&two.id);
+        }
+    }
+
+    for id in &non_overlapping_candidates {
+        if !overlaps.contains(id) {
+            return *id;
+        }
+    }
+
+    return 0;
 }
 
 #[cfg(test)]
