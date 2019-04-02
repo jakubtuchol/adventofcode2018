@@ -11,6 +11,7 @@ use std::process::exit;
 mod day_one;
 mod day_three;
 mod day_two;
+mod day_four;
 
 fn main() {
     let available_days: Vec<fn()> = vec![run_day_one, run_day_two, run_day_three];

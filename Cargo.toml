@@ -6,3 +6,4 @@ authors = ["Jakub Tucholski <jakub@uber.com>"]
 [dependencies]
 itertools = "0.7"
 clap = "2"
+regex = "1"
